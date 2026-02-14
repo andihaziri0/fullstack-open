@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import axios from "axios";
 import Person from "./components/Person";
 import Search from "./components/Search";
 import PersonForm from "./components/PersonForm";
@@ -62,26 +61,20 @@ const App = () => {
         personService
           .update(personFound.id, personObject)
           .then((response) => {
-            setPersons(
-              persons.map((person) => {
-                if (person.id == personFound.id) {
-                  return response;
-                } else {
-                  return person;
-                }
-              })
+            setPersons((prevPersons) =>
+              prevPersons.map((person) =>
+                person.id === personFound.id ? response : person
+              )
             );
             setNewName("");
             setNewPhone("");
-            setMessage(`Updated ${newName}`);
+            setSuccessMessage(`Updated ${newName}`);
             setTimeout(() => {
               setSuccessMessage(null);
             }, 5000);
           })
           .catch((error) => {
-            setErrorMessage(
-              `Note '${newName}' was already removed from server`
-            );
+            setErrorMessage(error.response.data.error);
             setTimeout(() => {
               setErrorMessage(null);
             }, 5000);
@@ -90,15 +83,23 @@ const App = () => {
       return;
     }
 
-    personService.create(personObject).then((response) => {
-      setPersons(persons.concat(response));
-      setNewName("");
-      setNewPhone("");
-      setSuccessMessage(`Added ${newName}`);
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 5000);
-    });
+    personService
+      .create(personObject)
+      .then((response) => {
+        setPersons(persons.concat(response));
+        setNewName("");
+        setNewPhone("");
+        setSuccessMessage(`Added ${newName}`);
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
+      })
+      .catch((error) => {
+        setErrorMessage(error.response.data.error);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+      });
   };
 
   const handleNewName = (event) => {
@@ -143,9 +144,9 @@ const App = () => {
 
       <h2>Numbers</h2>
       {personsToShow &&
-        personsToShow.map((person, i) => (
+        personsToShow.map((person) => (
           <Person
-            key={i}
+            key={person.id}
             name={person.name}
             phone={person.number}
             deletePerson={() => deletePerson(person.id)}
