@@ -28,7 +28,7 @@ function App() {
     if (countryToDisplay) {
       axios
         .get(
-          `https://api.pirateweather.net/forecast/zFcYmLiKjyZGSZgzzwAeKvm2ixa4cHko/${countryToDisplay.latlng.join(
+          `https://api.pirateweather.net/forecast/${import.meta.env.VITE_WEATHER_API_KEY}/${countryToDisplay.latlng.join(
             ","
           )}`
         )

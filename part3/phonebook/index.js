@@ -94,18 +94,15 @@ app.post("/api/persons", (request, response, next) => {
     });
   }
 
-  const person = {
-    ...request.body,
-  };
-  console.log(person);
+  const { name, number } = request.body;
 
-  if (!person.name || !person.number) {
+  if (!name || !number) {
     return response.status(400).json({
       error: "name or number missing",
     });
   }
 
-  Person.findOne({ name: person.name })
+  Person.findOne({ name })
     .then((existingPerson) => {
       if (existingPerson) {
         return response.status(400).json({
@@ -113,7 +110,7 @@ app.post("/api/persons", (request, response, next) => {
         });
       }
 
-      const newPerson = new Person(person);
+      const newPerson = new Person({ name, number });
       newPerson
         .save()
         .then((savedPerson) => {
@@ -127,11 +124,9 @@ app.post("/api/persons", (request, response, next) => {
 app.put("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
 
-  const person = {
-    ...request.body,
-  };
+  const { name, number } = request.body;
 
-  Person.findByIdAndUpdate(id, person, {
+  Person.findByIdAndUpdate(id, { name, number }, {
     new: true,
     runValidators: true,
     context: "query",

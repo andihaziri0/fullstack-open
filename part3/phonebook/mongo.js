@@ -1,6 +1,7 @@
+require('dotenv').config()
 const mongoose = require('mongoose')
 
-const url = `mongodb+srv://andihaziri0_db_user:hCaNnNlbhW5w8kpL@cluster0.iqlkewk.mongodb.net/phonebook?appName=Cluster0`
+const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery',false)
 

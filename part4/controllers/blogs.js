@@ -48,7 +48,6 @@ blogsRouter.delete("/:id", async (request, response, next) => {
       username: 1,
       name: 1,
     });
-    console.log("Blog found: ", blogFound);
 
     if (blogFound.user.username != user.username) {
       return response
@@ -67,7 +66,21 @@ blogsRouter.delete("/:id", async (request, response, next) => {
 blogsRouter.put("/:id", async (request, response, next) => {
   const id = request.params.id;
   try {
-    const updatedBlog = await Blog.findByIdAndUpdate(id, request.body);
+    if (!request.user) {
+      return response.status(401).json({ error: "token missing" });
+    }
+
+    const { title, author, url, likes } = request.body;
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      id,
+      { title, author, url, likes },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedBlog) {
+      return response.status(404).json({ error: "blog not found" });
+    }
+
     response.json(updatedBlog);
   } catch (error) {
     next(error);
