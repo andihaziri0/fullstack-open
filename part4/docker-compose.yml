@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  bloglist-app:
+    build: .
+    ports:
+      - "${PORT:-3003}:${PORT:-3003}"
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - PORT=${PORT:-3003}
+      - SECRET=${SECRET}
+    env_file:
+      - .env
