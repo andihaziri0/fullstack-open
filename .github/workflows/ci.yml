@@ -27,11 +27,11 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run linter
-        run: npm run lint
+        run: npx eslint .
         continue-on-error: true
 
       - name: Run tests
-        run: npm test
+        run: npx cross-env NODE_ENV=test node --test
